@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garage Booking Assistant (Secure Streaming)</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent: #ff8e3a;
+            --text-main: #ffffff;
+            --text-sub: #b0b0b0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            padding: 15px 30px;
+            background: var(--card-bg);
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main-title { margin: 0; font-size: 1.2rem; color: var(--accent); font-weight: 600; }
+        .subtitle { margin: 0; font-size: 0.8rem; color: var(--text-sub); }
+
+        .container {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            gap: 20px;
+            height: calc(100vh - 70px);
+            box-sizing: border-box;
+        }
+
+        .calendar-section {
+            flex: 2;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+        }
+        .fc { color: var(--text-sub); }
+        .fc-toolbar-title { color: var(--text-main) !important; font-size: 1.2rem !important; }
+        .fc-button { background-color: #333 !important; border: none !important; }
+        .fc-button-active { background-color: var(--accent) !important; color: #000 !important; }
+        .fc-daygrid-day-number { color: var(--text-sub); text-decoration: none; }
+
+        .animation-section {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .controls-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .toggle-btn {
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .toggle-btn.active {
+            background: rgba(255, 142, 58, 0.2);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .latency-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            user-select: none;
+        }
+        .latency-switch input { cursor: pointer; accent-color: var(--accent); }
+
+        .status-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #2a2a2a;
+            color: #666;
+            margin-left: auto;
+            margin-right: 10px;
+        }
+        .status-badge.active { background: #2e7d32; color: #fff; }
+
+        #lottie-container {
+            width: 180px;
+            height: 180px;
+            transition: all 0.3s;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+        #lottie-container.listening { opacity: 1; transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(255, 142, 58, 0.3)); }
+        #lottie-container.processing { opacity: 0.8; animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { transform: scale(0.95); } 50% { transform: scale(1.05); } 100% { transform: scale(0.95); } }
+
+        #transcription-display {
+            flex: 1;
+            width: 100%;
+            overflow-y: auto;
+            padding-right: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .msg-bubble {
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            max-width: 85%;
+            line-height: 1.4;
+        }
+        .msg-user {
+            align-self: flex-end;
+            background: #333;
+            color: #ddd;
+            border-bottom-right-radius: 2px;
+        }
+        .msg-bot {
+            align-self: flex-start;
+            background: var(--accent);
+            color: #000;
+            border-bottom-left-radius: 2px;
+            font-weight: 500;
+        }
+
+        /* 延迟数据样式 */
+        .latency-info {
+            font-family: 'Consolas', monospace;
+            font-size: 0.7rem;
+            color: rgba(0, 0, 0, 0.6);
+            margin-top: 6px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            display: none;
+            text-align: right;
+        }
+
+        #transcription-display.show-latency-mode .latency-info {
+            display: block;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1 class="main-title">Garage AI Assistant</h1>
+            <p class="subtitle">Secure Streaming UI (No API Keys)</p>
+        </div>
+        <div id="connection-status" style="width:10px; height:10px; border-radius:50%; background:#444;" title="Server Status"></div>
+    </header>
+
+    <div class="container">
+        <div class="calendar-section">
+            <div id="calendar"></div>
+        </div>
+
+        <div class="animation-section">
+            <div class="controls-bar">
+                <button id="vad-toggle" class="toggle-btn">
+                    <i class="fas fa-microphone-slash" id="vad-icon"></i>
+                    <span id="vad-text">Continuous Mode</span>
+                </button>
+
+                <span id="vad-status" class="status-badge">IDLE</span>
+
+                <label class="latency-switch">
+                    <input type="checkbox" id="latency-toggle" checked>
+                    <span>Show Latency</span>
+                </label>
+            </div>
+
+            <div id="lottie-container"></div>
+
+            <div id="transcription-display">
+                <div class="msg-group">
+                    <div class="msg-bubble msg-bot">
+                        你好！我是车库助手。对话内容及音频现已通过安全后端传输。
+                        <div class="latency-info">System Ready</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ================== UI 逻辑：延迟开关 ==================
+            const latencyToggleCheck = document.getElementById('latency-toggle');
+            const chatContainer = document.getElementById('transcription-display');
+
+            if (latencyToggleCheck.checked) chatContainer.classList.add('show-latency-mode');
+
+            latencyToggleCheck.addEventListener('change', (e) => {
+                if(e.target.checked) chatContainer.classList.add('show-latency-mode');
+                else chatContainer.classList.remove('show-latency-mode');
+            });
+
+            // ================== 初始化日历 ==================
+            const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                initialView: 'dayGridMonth',
+                headerToolbar: { left: 'prev,next', center: 'title', right: 'today' },
+                height: '100%',
+                contentHeight: 'auto',
+                events: [ { title: 'Service Booked', start: '2026-01-28', color: '#ff8e3a' } ]
+            });
+            calendar.render();
+
+            // ================== 初始化动画 ==================
+            const lottieContainer = document.getElementById('lottie-container');
+            const animation = lottie.loadAnimation({
+                container: lottieContainer,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: 'https://lottie.host/6b685822-1d01-4993-9426-879893708573/Hk8yF6yvWz.json'
+            });
+            animation.setSpeed(0.5);
+
+            // ================== 核心 VAD 与 Socket ==================
+            const socket = io();
+            const vadToggleBtn = document.getElementById('vad-toggle');
+            const vadIcon = document.getElementById('vad-icon');
+            const vadText = document.getElementById('vad-text');
+            const vadStatus = document.getElementById('vad-status');
+            const connStatus = document.getElementById('connection-status');
+
+            let isVadEnabled = false;
+            let currentState = 'IDLE';
+            let audioContext, analyser, mediaStream, mediaRecorder;
+            let audioChunks = [];
+            let vadFrameId;
+
+            const VAD_THRESHOLD = 0.02;
+            const SILENCE_DURATION = 1200;
+            const SPEECH_START_FRAMES = 5;
+
+            let silenceStart = Date.now();
+            let speechFrames = 0;
+
+            function updateState(newState) {
+                currentState = newState;
+                vadStatus.textContent = newState;
+                lottieContainer.className = '';
+
+                switch (newState) {
+                    case 'IDLE':
+                        vadStatus.className = 'status-badge';
+                        animation.setSpeed(0.5);
+                        break;
+                    case 'LISTENING':
+                        vadStatus.className = 'status-badge active';
+                        animation.setSpeed(1);
+                        lottieContainer.classList.add('listening');
+                        break;
+                    case 'RECORDING':
+                        vadStatus.className = 'status-badge active';
+                        animation.setSpeed(1.5);
+                        break;
+                    case 'PROCESSING':
+                        animation.setSpeed(2);
+                        lottieContainer.classList.add('processing');
+                        break;
+                    case 'SPEAKING':
+                        animation.setSpeed(1.2);
+                        lottieContainer.classList.add('listening');
+                        break;
+                }
+            }
+
+            vadToggleBtn.addEventListener('click', async () => {
+                isVadEnabled = !isVadEnabled;
+                if (isVadEnabled) {
+                    try {
+                        await startVadSystem();
+                        vadToggleBtn.classList.add('active');
+                        vadIcon.className = 'fas fa-microphone';
+                        vadText.textContent = 'Mode: ON';
+                    } catch (e) {
+                        alert("Microphone Error: " + e.message);
+                        isVadEnabled = false;
+                    }
+                } else {
+                    stopVadSystem();
+                    vadToggleBtn.classList.remove('active');
+                    vadIcon.className = 'fas fa-microphone-slash';
+                    vadText.textContent = 'Mode: OFF';
+                    updateState('IDLE');
+                }
+            });
+
+            async function startVadSystem() {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 512;
+                const source = audioContext.createMediaStreamSource(mediaStream);
+                source.connect(analyser);
+                updateState('LISTENING');
+                runVadLoop();
+            }
+
+            function stopVadSystem() {
+                if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+                if (audioContext) audioContext.close();
+                cancelAnimationFrame(vadFrameId);
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+            }
+
+            function runVadLoop() {
+                if (!isVadEnabled) return;
+                if (currentState === 'SPEAKING' || currentState === 'PROCESSING') {
+                    vadFrameId = requestAnimationFrame(runVadLoop);
+                    return;
+                }
+
+                const data = new Uint8Array(analyser.frequencyBinCount);
+                analyser.getByteTimeDomainData(data);
+                let sum = 0;
+                for (let i = 0; i < data.length; i++) {
+                    const normalized = (data[i] - 128) / 128;
+                    sum += normalized * normalized;
+                }
+                const rms = Math.sqrt(sum / data.length);
+
+                if (rms > VAD_THRESHOLD) {
+                    speechFrames++;
+                    if (speechFrames > SPEECH_START_FRAMES && currentState === 'LISTENING') startRecording();
+                    if (currentState === 'RECORDING') silenceStart = Date.now();
+                } else {
+                    speechFrames = 0;
+                    if (currentState === 'RECORDING') {
+                        if (Date.now() - silenceStart > SILENCE_DURATION) stopRecordingAndSend();
+                    }
+                }
+                vadFrameId = requestAnimationFrame(runVadLoop);
+            }
+
+            function startRecording() {
+                updateState('RECORDING');
+                audioChunks = [];
+                mediaRecorder = new MediaRecorder(mediaStream, { mimeType: 'audio/webm' });
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                mediaRecorder.start();
+            }
+
+            function stopRecordingAndSend() {
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(blob);
+                        reader.onloadend = () => {
+                            const base64 = reader.result.split(',')[1];
+                            socket.emit('audio_data', { audio: base64, recording_mode: true });
+                            updateState('PROCESSING');
+                        };
+                    };
+                }
+            }
+
+            function addTranscription(userText, botText, latencyData) {
+                const group = document.createElement('div');
+                group.className = 'msg-group';
+
+                if (userText) {
+                    const uBubble = document.createElement('div');
+                    uBubble.className = 'msg-bubble msg-user';
+                    uBubble.textContent = userText;
+                    group.appendChild(uBubble);
+                }
+
+                if (botText) {
+                    const bBubble = document.createElement('div');
+                    bBubble.className = 'msg-bubble msg-bot';
+                    bBubble.innerHTML = botText;
+
+                    if (latencyData) {
+                        const latDiv = document.createElement('div');
+                        latDiv.className = 'latency-info';
+                        const backendTime = latencyData.backend || 'N/A';
+                        latDiv.textContent = `Backend: ${backendTime}ms`;
+                        bBubble.appendChild(latDiv);
+                    }
+                    group.appendChild(bBubble);
+                }
+
+                chatContainer.appendChild(group);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            // ================== Socket & Secure TTS Streaming ==================
+            socket.on('connect', () => { connStatus.style.background = '#4caf50'; });
+            socket.on('disconnect', () => {
+                connStatus.style.background = '#f44336';
+                updateState('IDLE');
+                isVadEnabled = false;
+                vadToggleBtn.classList.remove('active');
+            });
+
+            socket.on('bot_response', (data) => {
+                addTranscription(data.user_text, data.bot_text, data.latency_ms);
+
+                // 🔴 安全的后端代理流式播放 (Secure Backend Proxy Streaming)
+                if (data.bot_text) {
+                    updateState('SPEAKING');
+
+                    // 初始化高级音频环境
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                    // 向你自己的后端请求，安全无 Key
+                    fetch(`/api/tts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: data.bot_text })
+                    })
+                    .then(async response => {
+                        if (!response.ok) throw new Error("Backend TTS API Error");
+
+                        const reader = response.body.getReader();
+
+                        // 极速读取音频流碎片
+                        while (true) {
+                            const { done, value } = await reader.read();
+                            if (done) {
+                                resetToListening();
+                                break;
+                            }
+
+                            // 边下边播
+                            audioContext.decodeAudioData(value.buffer)
+                                .then(audioBuffer => {
+                                    const source = audioContext.createBufferSource();
+                                    source.buffer = audioBuffer;
+                                    source.connect(audioContext.destination);
+                                    source.start();
+                                })
+                                .catch(e => {}); // 忽略部分块解码错误，保证顺畅播放
+                        }
+                    })
+                    .catch(err => {
+                        console.error("TTS Streaming Error:", err);
+                        resetToListening();
+                    });
+                } else {
+                    resetToListening();
+                }
+
+                // 重置 VAD 状态的辅助函数
+                function resetToListening() {
+                    if (isVadEnabled) {
+                        updateState('LISTENING');
+                        silenceStart = Date.now();
+                    } else {
+                        updateState('IDLE');
+                    }
+                }
+            });
+
+            socket.on('error', (err) => {
+                console.error("Server Error:", err);
+                if (isVadEnabled) updateState('LISTENING');
+            });
+        });
+    </script>
+</body>
+</html>

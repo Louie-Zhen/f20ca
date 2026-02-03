@@ -1,0 +1,357 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #000000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header Section */
+.header {
+    text-align: center;
+    padding: 30px 20px 20px;
+    background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.95) 100%);
+    border-bottom: 1px solid rgba(255, 142, 58, 0.15);
+}
+
+.main-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin: 0;
+    background: linear-gradient(135deg, #ff8e3a 0%, #ffb366 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 10px 0 0;
+    letter-spacing: 1px;
+}
+
+.container {
+    display: flex;
+    flex: 1;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Calendar Section - Left Side */
+.calendar-section {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid rgba(255, 142, 58, 0.2);
+}
+
+#calendar {
+    width: 100%;
+    max-width: 700px;
+    background-color: transparent;
+    padding: 0;
+}
+
+/* FullCalendar Styling for Dark Theme */
+.fc {
+    background-color: transparent;
+    color: #ffffff;
+}
+
+/* Remove borders for minimal look */
+.fc-theme-standard td,
+.fc-theme-standard th {
+    border: none;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+    border: none;
+}
+
+/* Toolbar styling */
+.fc .fc-toolbar-title {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+.fc .fc-button-primary {
+    background-color: transparent;
+    border: 1px solid rgba(255, 142, 58, 0.4);
+    color: #ff8e3a;
+    font-weight: 400;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.fc .fc-button-primary:hover {
+    background-color: rgba(255, 142, 58, 0.1);
+    border-color: #ff8e3a;
+}
+
+.fc .fc-button-primary:disabled {
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.fc .fc-button-active {
+    background-color: rgba(255, 142, 58, 0.2) !important;
+    border-color: #ff8e3a !important;
+}
+
+/* Header styling */
+.fc-col-header-cell-cushion {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 400;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 10px 0;
+}
+
+/* Day numbers */
+.fc-daygrid-day-number {
+    color: #ffffff;
+    font-size: 0.95rem;
+    padding: 8px;
+}
+
+/* Today highlight */
+.fc-day-today {
+    background-color: rgba(255, 142, 58, 0.05) !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+    color: #ff8e3a;
+    font-weight: 600;
+}
+
+/* Day cells hover effect */
+.fc-daygrid-day:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+    cursor: pointer;
+}
+
+/* Events */
+.fc-event {
+    background-color: #ff8e3a;
+    border: none;
+    color: #000000;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+.fc-event:hover {
+    background-color: #ff7420;
+}
+
+/* Animation Section - Right Side */
+.animation-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+/* Recording Controls */
+.recording-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 142, 58, 0.3);
+    border-radius: 25px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.toggle-btn:hover {
+    background-color: rgba(255, 142, 58, 0.1);
+    border-color: #ff8e3a;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 142, 58, 0.2);
+}
+
+.toggle-btn:active {
+    transform: translateY(0);
+}
+
+.toggle-btn.active {
+    background-color: rgba(255, 142, 58, 0.2);
+    border-color: #ff8e3a;
+    box-shadow: 0 0 20px rgba(255, 142, 58, 0.3);
+}
+
+.toggle-icon {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.toggle-btn.active .toggle-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+}
+
+.recording-status {
+    font-size: 0.9rem;
+    color: #ff8e3a;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.recording-status.active {
+    opacity: 1;
+}
+
+#lottie-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+#lottie-animation {
+    width: 400px;
+    height: 400px;
+    transition: all 0.3s ease;
+}
+
+/* State-based blob sizing */
+#lottie-container.idle {
+    transform: scale(0.85);
+    opacity: 0.6;
+}
+
+#lottie-container.recording {
+    transform: scale(1.15);
+    opacity: 1;
+}
+
+#lottie-container.processing {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* Transcription Display */
+#transcription-display {
+    margin-top: 40px;
+    padding: 20px 30px;
+    background-color: rgba(255, 142, 58, 0.1);
+    border: 1px solid rgba(255, 142, 58, 0.3);
+    border-radius: 12px;
+    min-height: 100px;
+    max-width: 700px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.8;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+#transcription-display:empty {
+    display: none;
+}
+
+#transcription-display.updating {
+    border-color: #ff8e3a;
+    background-color: rgba(255, 142, 58, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .header {
+        padding: 20px 15px 15px;
+    }
+
+    .main-title {
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        font-size: 0.85rem;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .calendar-section {
+        flex: none;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 142, 58, 0.2);
+        padding: 20px;
+    }
+
+    .animation-section {
+        flex: none;
+        padding: 20px;
+    }
+
+    #lottie-animation {
+        width: 250px;
+        height: 250px;
+    }
+
+    #lottie-container {
+        margin-top: 20px;
+    }
+
+    .section-title {
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+}

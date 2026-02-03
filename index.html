@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garage Booking Bot</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <h1 class="main-title">Garage Booking Assistant</h1>
+        <p class="subtitle">Your AI-powered voice assistant for seamless garage reservations</p>
+    </header>
+
+    <div class="container">
+        <!-- Left side: Calendar -->
+        <div class="calendar-section">
+            <h2 class="section-title">Garage Availability</h2>
+            <div id="calendar"></div>
+        </div>
+
+        <!-- Right side: Lottie Animation -->
+        <div class="animation-section">
+            <h2 class="section-title">Voice Assistant</h2>
+
+            <!-- Recording Mode Toggle -->
+            <div class="recording-controls">
+                <button id="recording-toggle" class="toggle-btn">
+                    <span class="toggle-icon">🔴</span>
+                    <span class="toggle-text">Recording OFF</span>
+                </button>
+                <span id="recording-status" class="recording-status"></span>
+            </div>
+
+            <div id="lottie-container">
+                <div id="lottie-animation"></div>
+            </div>
+            <div id="transcription-display"></div>
+        </div>
+    </div>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <!-- Lottie Web -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <!-- Puter.js for ElevenLabs TTS -->
+    <script src="https://js.puter.com/v2/"></script>
+    <!-- Custom Script -->
+    <script src="script.js"></script>
+</body>
+</html>

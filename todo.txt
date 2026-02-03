@@ -1,0 +1,7 @@
+currently, we are just sending the current message to the bot, not the whole text history. This helps latency,  but we loose context. Also,
+we can dynamically update the prompt to have the context of the current calender, current date, and nearby reservations. This will avoid the use
+of tool calling, increasing the overall latency. 
+
+Each booking requires capturing a full name, car detail, problem with the car,  and the date and time user is comfortable with. 
+
+so let us complete the booking system first, before we go off improving our latency system.

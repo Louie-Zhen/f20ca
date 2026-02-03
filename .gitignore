@@ -1,0 +1,36 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# SpeechBrain models
+pretrained_models/
+
+# Audio recordings
+*.wav
+*.webm
+*.mp3
+*.ogg
+*.m4a
+
+# OS files
+.DS_Store
+*.swp
+*.swo
+
+# IDE
+.vscode/
+.idea/
+.claude
+
+recordings
+# 项目排除路径
+/.venv/

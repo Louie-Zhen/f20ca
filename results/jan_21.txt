@@ -1,0 +1,14 @@
+right so I am using speech brain and everything is happening in batches... the overall latency is at 30s. this is bad but atleast this is functional.
+on three to  and fros, it came down  to 17s.
+
+so i updated the model to be hot loaded once the server starts, and the first interaction came down to 16s instead of starting at 30s. So progress, i guess.
+
+I changed the tts from speech brain to eleven labs via puter, and latency dropped to like 7s and the audio quality is waaaay good...
+
+
+okkkk... so i am using eleven labs stt, and it is around 2.5s now
+
+added vad,  updated the booking system, we are now at 2.5 - 3s range,  here is the breakdown.. 
+INFO:__main__:Total backend latency: 2849.65ms (conversion: 781.35ms + VAD: 385.49ms + trim: 62.28ms + ASR: 697.25ms + LLM: 920.95ms + overhead: 2.34ms)
+
+ofc, the next obvious improvement is at conversion by streaming our responses.
